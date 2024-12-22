@@ -1,15 +1,13 @@
+import { BrowserRouter } from "react-router-dom"
 import "./App.css"
-import { Content, Footer, Header } from "./components/"
-import { Home } from "./pages/"
+import { Router } from "./router/"
 
 const App = () => {
   return (
     <>
-      <Header />
-      <Content>
-        <Home />
-      </Content>
-      <Footer projectDeveloper="Ebbecke" />
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
     </>
   )
 }
