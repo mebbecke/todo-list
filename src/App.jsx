@@ -1,13 +1,13 @@
 import "./App.css"
 import { Content, Footer, Header } from "./components/"
+import { Home } from "./pages/"
 
 const App = () => {
   return (
     <>
       <Header />
       <Content>
-        <h1>Titulo</h1>
-        <p>Texto</p>
+        <Home />
       </Content>
       <Footer projectDeveloper="Ebbecke" />
     </>
