@@ -5,7 +5,7 @@ import style from "./create-task-form.module.css"
 
 const CreateTaskForm = () => {
   const [taskName, setTaskName] = useState("")
-  const { addTask } = useAppContext()
+  const { addTask, addLoading } = useAppContext()
 
   const changeTaskName = (event) => {
     setTaskName(event.currentTarget.value)
@@ -24,7 +24,7 @@ const CreateTaskForm = () => {
   return (
     <form className={style.CreateTaskForm} onSubmit={onSubmit}>
       <TextField value={taskName} onChange={changeTaskName} />
-      <Button text="+" />
+      <Button text={addLoading ? "..." : "+"} />
     </form>
   )
 }

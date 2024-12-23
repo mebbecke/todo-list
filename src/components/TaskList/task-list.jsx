@@ -3,13 +3,16 @@ import style from "./task-list.module.css"
 import { TaskListItem } from "./TaskListItem/task-list-item"
 
 const TaskList = () => {
-  const { tasks } = useAppContext()
+  const { tasks, getLoading } = useAppContext()
 
   return (
     <ul className={style.TaskList}>
-      {!tasks.length && <p>Nenhuma tarefa cadastrada</p>}
+      {getLoading && <p>Carregando...</p>}
+
+      {!getLoading && !tasks.length && <p>Nenhuma tarefa cadastrada</p>}
+
       {tasks.map((task) => (
-        <TaskListItem key={task.id} id={task.id} nome={task.nome} />
+        <TaskListItem key={task.id} id={task.id} name={task.name} />
       ))}
     </ul>
   )

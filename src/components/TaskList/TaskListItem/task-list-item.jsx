@@ -4,27 +4,41 @@ import { useAppContext } from "../../../hooks"
 import style from "./task-list-item.module.css"
 
 const TaskListItem = (props) => {
-  const { id, nome } = props
-  const { removeTask, updateTask } = useAppContext()
+  const { id, name } = props
+  const { removeTask, updateTask, removeLoading, updateLoading } =
+    useAppContext()
 
   const [isEditing, setIsEditing] = useState(false)
 
+  const handleUpdateTask = (event) => {
+    const newTaskName = event.target.value
+    updateTask(id, newTaskName)
+    setIsEditing(false)
+  }
+
+  const isRemoveLoading = removeLoading === id
+  const isUpdateLoading = updateLoading === id
+
   return (
     <li className={style.TaskListItem}>
-      {isEditing ? (
+      {(isEditing || isUpdateLoading) && (
         <TextField
           type="text"
-          defaultValue={nome}
-          onChange={(event) => updateTask(id, event.target.value)}
-          onBlur={() => setIsEditing(false)}
+          defaultValue={name}
+          onBlur={handleUpdateTask}
           autoFocus
         />
-      ) : (
-        <span onDoubleClick={() => setIsEditing(true)}>{nome}</span>
       )}
+
+      {!isUpdateLoading && !isEditing && (
+        <span onDoubleClick={() => setIsEditing(true)}>{name}</span>
+      )}
+
+      {isUpdateLoading && <span>...</span>}
+
       <Button
         type="button"
-        text="-"
+        text={isRemoveLoading ? "..." : "-"}
         variant={BUTTON_TYPE.SECONDARY}
         onClick={() => removeTask(id)}
       />

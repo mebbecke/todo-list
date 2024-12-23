@@ -1,4 +1,5 @@
-import { createContext, useState } from "react"
+import { createContext, useEffect, useState } from "react"
+import { api } from "../services/"
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext({})
@@ -8,46 +9,80 @@ export const AppContextProvider = (props) => {
 
   // eslint-disable-next-line no-unused-vars
   const [developer, setDeveloper] = useState("Ebbecke")
-  const [tasks, setTasks] = useState([
-    { id: 1, nome: "Tarefa 1" },
-    { id: 2, nome: "Tarefa 2" },
-    { id: 3, nome: "Tarefa 3" },
-  ])
+  const [tasks, setTasks] = useState([])
 
-  const addTask = (taskName) => {
-    setTasks((currentState) => {
-      const newTask = {
-        id: currentState.length + 1,
-        nome: taskName,
-      }
+  const [getLoading, setGetLoading] = useState(false)
+  const [addLoading, setAddLoading] = useState(false)
+  const [removeLoading, setRemoveLoading] = useState(null)
+  const [updateLoading, setUpdateLoading] = useState(null)
 
-      return [...currentState, newTask]
-    })
+  const loadTasks = async () => {
+    setGetLoading(true)
+    const { data = [] } = await api.get("/tasks")
+
+    setTasks([...data])
+    setGetLoading(false)
   }
 
-  const removeTask = (taskId) => {
+  const addTask = async (taskName) => {
+    setAddLoading(true)
+    const { data: task } = await api.post("/tasks", { name: taskName })
+
+    setTasks((currentState) => {
+      return [...currentState, task]
+    })
+    setAddLoading(false)
+  }
+
+  const removeTask = async (taskId) => {
+    setRemoveLoading(taskId)
+    await api.delete(`/tasks/${taskId}`)
+
     setTasks((currentState) => {
       const updatedTasks = currentState.filter((task) => task.id !== taskId)
       return [...updatedTasks]
     })
+    setRemoveLoading(null)
   }
 
-  const updateTask = (taskId, newTaskName) => {
+  const updateTask = async (taskId, newTaskName) => {
+    setUpdateLoading(taskId)
+    const { data: updatedTask } = await api.put(`tasks/${taskId}`, {
+      name: newTaskName,
+    })
+
     setTasks((currentState) => {
       const updatedTasks = currentState.map((task) => {
-        if (task.id === taskId) {
-          return { ...task, nome: newTaskName }
-        }
-        return task
+        return task.id == taskId
+          ? {
+              ...task,
+              name: updatedTask.name,
+            }
+          : task
       })
 
       return [...updatedTasks]
     })
+    setUpdateLoading(null)
   }
+
+  useEffect(() => {
+    loadTasks()
+  }, [])
 
   return (
     <AppContext.Provider
-      value={{ developer, tasks, addTask, removeTask, updateTask }}
+      value={{
+        developer,
+        tasks,
+        addTask,
+        removeTask,
+        updateTask,
+        getLoading,
+        addLoading,
+        removeLoading,
+        updateLoading,
+      }}
     >
       {children}
     </AppContext.Provider>

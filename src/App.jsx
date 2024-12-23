@@ -1,7 +1,7 @@
 import { BrowserRouter } from "react-router-dom"
 import "./App.css"
 import { AppContextProvider } from "./contexts"
-import { Router } from "./router/"
+import { Router } from "./Router/"
 
 const App = () => {
   return (
